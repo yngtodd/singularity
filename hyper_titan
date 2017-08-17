@@ -1,0 +1,202 @@
+####
+# Defines a Singularity container with GPU and MPI enabled TensorFlow
+####
+
+BootStrap: docker
+From: ubuntu:zesty
+
+%environment
+  export PATH=${PATH-}:/usr/lib/jvm/java-8-openjdk-amd64/bin/:/usr/local/cuda/bin
+  export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+  export CUDA_HOME=/usr/local/cuda
+  export LD_LIBRARY_PATH=${LD_LIBRARY_PATH-}:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64
+  export PYTHONPATH=/xgboost/python-package
+
+%post
+  apt update
+  apt-get install -y software-properties-common
+  apt-add-repository universe
+  apt update
+  apt install -y mpich
+  apt install -y build-essential wget curl pkg-config libtool autoconf openjdk-8-jdk g++ zip zlib1g-dev unzip git
+  apt install -y python-numpy python-scipy python-dev python-pip python-setuptools
+  apt install -y python3-numpy python3-scipy python3-dev python3-pip python3-setuptools
+
+  pip install --upgrade pip
+  pip3 install --upgrade pip
+
+  # Install CUDA toolkit and driver libraries/binaries
+
+  # Fetch cuda toolkit installer
+  wget http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda_7.5.18_linux.run
+
+  export PERL5LIB=.
+  sh cuda_7.5.18_linux.run --silent --toolkit --override
+
+  # Install cuDNN
+  wget http://developer.download.nvidia.com/compute/redist/cudnn/v5.1/cudnn-7.5-linux-x64-v5.1.tgz
+  tar xvzf cudnn-7.5-linux-x64-v5.1.tgz 
+  cp -P cuda/include/cudnn.h /usr/local/cuda/include
+  cp -P cuda/lib64/libcudnn* /usr/local/cuda/lib64
+  chmod a+r /usr/local/cuda/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
+
+  # Clean up CUDA install
+  rm -rf cuda_7.5.18_linux.run
+  rm -rf cudnn-7.5-linux-x64-v5.1.tgz
+
+  # Patch CUDA/7.5 to use gcc/4.9, the highest support release
+  apt install -y gcc-4.9 g++-4.9
+  ln -s /usr/bin/gcc-4.9 /usr/local/cuda/bin/gcc 
+  ln -s /usr/bin/g++-4.9 /usr/local/cuda/bin/g++
+
+  # Install Bazel
+  echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
+  curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
+  apt update -y && apt install -y bazel
+  apt upgrade -y bazel
+
+  # Make sure no leftover tensorflow artifacts from previous builds
+  rm -rf /tmp/tensorflow_pkg
+  rm -rf /root/.cache
+
+  # Set tensorflow configure options
+  export PYTHON_BIN_PATH=`which python`
+  export PYTHON_LIB_PATH=/usr/lib/python2.7/dist-packages
+  export TF_NEED_MKL=0
+  export CC_OPT_FLAGS="-march=native"
+  export TF_NEED_JEMALLOC=1
+  export TF_NEED_GCP=0
+  export TF_NEED_HDFS=0
+  export TF_ENABLE_XLA=0
+  export TF_NEED_OPENCL=0
+  export TF_NEED_CUDA=1
+  export TF_CUDA_CLANG=0
+  export GCC_HOST_COMPILER_PATH=/usr/bin/gcc-4.9
+  export TF_CUDA_VERSION="7.5"
+  export CUDA_TOOLKIT_PATH="/usr/local/cuda"
+  export TF_CUDNN_VERSION="5"
+  export CUDNN_INSTALL_PATH=$CUDA_TOOLKIT_PATH
+  export TF_CUDA_COMPUTE_CAPABILITIES="3.5"
+  export TF_NEED_VERBS=0
+  export TF_NEED_MPI=1
+  export MPI_HOME=/usr
+
+  # Tensorflow has horrible MPI support in ./configure...
+  ln -s /usr/include/mpi/mpi.h /usr/include/mpi.h
+  ln -s /usr/include/mpi/mpio.h /usr/include/mpio.h
+  ln -s /usr/include/mpi/mpicxx.h /usr/include/mpicxx.h
+
+  # Java cert update
+  apt install ca-certificates-java
+  update-ca-certificates -f
+
+  git config --global user.email "help@olcf.ornl.gov"
+  git config --global user.name "OLCF"
+
+  # Build/Install Tensorflow against python 3
+  cd /
+  git clone https://github.com/tensorflow/tensorflow.git
+  cd tensorflow
+  git checkout tags/v1.3.0-rc2
+  # Chery pick fix for bazel 0.5.3
+  git cherry-pick c5d311eaf8cc6471643b5c43810a1feb19662d6c 
+  ./configure
+
+  bazel build -c opt --copt=-mavx --copt=-msse4.1 --copt=-msse4.2 --config=cuda tensorflow/tools/pip_package:build_pip_package
+  bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
+
+  pip install /tmp/tensorflow_pkg/tensorflow-*.whl
+
+  cd /
+  rm -rf tensorflow
+  rm -rf /tmp/tensorflow_pkg
+
+  # Build/Install Tensorflow against python 3
+  export PYTHON_BIN_PATH=`which python3`
+  export PYTHON_LIB_PATH=/usr/lib/python3/dist-packages
+
+  git clone https://github.com/tensorflow/tensorflow.git
+  cd tensorflow
+  git checkout tags/v1.3.0-rc2
+  # Chery pick fix for bazel 0.5.3
+  git cherry-pick c5d311eaf8cc6471643b5c43810a1feb19662d6c
+  ./configure 
+
+  bazel build -c opt --copt=-mavx --copt=-msse4.1 --copt=-msse4.2 --config=cuda tensorflow/tools/pip_package:build_pip_package
+  bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
+
+  pip3 install /tmp/tensorflow_pkg/tensorflow-*.whl
+
+  cd /
+  rm -rf tensorflow
+  rm -rf /tmp/tensorflow_pkg
+
+  # Install Additional deeplearning python packages
+  
+  # Install Pytorch - the only real deeplearning package
+  pip install http://download.pytorch.org/whl/cu75/torch-0.2.0.post1-cp27-cp27m-manylinux1_x86_64.whl 
+  pip install torchvision 
+  
+  pip3 install http://download.pytorch.org/whl/cu75/torch-0.2.0.post1-cp36-cp36m-manylinux1_x86_64.whl 
+  pip3 install torchvision
+
+  pip install keras
+  pip3 install keras
+
+  pip install scikit-learn
+  pip3 install scikit-learn
+
+  apt install -y python-theano
+  apt install -y python3-theano
+
+  # Install MPI4PY against mpich(python-mpi4py is built against OpenMPI)
+  # GCC/4.8 is too old to acept the compile flags required by mpi4py
+  pip install mpi4py
+  pip3 install mpi4py
+  
+  # Install Scikit-Optimize
+  cd /
+  git clone https://github.com/scikit-optimize/scikit-optimize.git
+  cd scikit-optimize
+  pip install -e .
+  
+  cd /
+  git clone https://github.com/scikit-optimize/scikit-optimize.git
+  cd scikit-optimize
+  pip3 install -e .
+  
+  # Install Hyperspace
+  cd /
+  git clone git@github.com:yngtodd/hypergalaxy.git
+  cd hypergalaxy
+  pip install -e .
+  
+  cd /
+  git clone git@github.com:yngtodd/hypergalaxy.git
+  cd hypergalaxy
+  pip3 install -e .
+
+  # Install xgboost
+  cd /
+  git clone --recursive https://github.com/dmlc/xgboost
+  cd xgboost; make -j4
+
+  # Install Python package system wide
+  cd python-package; sudo python setup.py install
+  cd /xgboost
+  mkdir build
+  cd build
+  cmake .. -DPLUGIN_UPDATER_GPU=ON
+  make -j
+
+  # Patch container to work on Titan
+  cd /
+  wget https://raw.githubusercontent.com/olcf/SingularityTools/master/Titan/TitanBootstrap.sh
+  sh TitanBootstrap.sh
+  rm TitanBootstrap.sh
+
+  # Make sure bazel is shutdown so it doesn't stop singularity from cleanly exiting
+  bazel shutdown
+  sleep 10
+  pkill -f bazel*
+  ps aux | grep bazel
