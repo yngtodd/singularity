@@ -61,9 +61,6 @@ From: ubuntu:zesty
   apt install ca-certificates-java
   update-ca-certificates -f
 
-  git config --global user.email "help@olcf.ornl.gov"
-  git config --global user.name "OLCF"
-
   # Install Bazel
   echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
   curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
