@@ -126,3 +126,9 @@ From: ubuntu:zesty
   wget https://raw.githubusercontent.com/olcf/SingularityTools/master/Titan/TitanBootstrap.sh
   sh TitanBootstrap.sh
   rm TitanBootstrap.sh
+  
+  -  # Make sure bazel is shutdown so it doesn't stop singularity from cleanly exiting
+  -  bazel shutdown
+  -  sleep 10
+  -  pkill -f bazel*
+  -  ps aux | grep bazel
