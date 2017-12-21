@@ -127,8 +127,8 @@ From: ubuntu:zesty
   sh TitanBootstrap.sh
   rm TitanBootstrap.sh
   
-  -  # Make sure bazel is shutdown so it doesn't stop singularity from cleanly exiting
-  -  bazel shutdown
-  -  sleep 10
-  -  pkill -f bazel*
-  -  ps aux | grep bazel
+  # Make sure bazel is shutdown so it doesn't stop singularity from cleanly exiting
+  bazel shutdown
+  sleep 10
+  pkill -f bazel*
+  ps aux | grep bazel
