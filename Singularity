@@ -29,8 +29,8 @@ From: ubuntu:latest
   # Install Anaconda Python 3
   cd /
   wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86.sh
-  bash Anaconda3-5.0.1-Linux-x86.sh -b -p /anaconda3
-  PATH="/anaconda3/bin:$PATH"
+  bash Anaconda3-5.0.1-Linux-x86.sh -b -p $HOME/anaconda3
+  export PATH="$HOME/anaconda3/bin:$PATH"
   rm Anaconda3-5.0.1-Linux-x86.sh
 
   # Install CUDA toolkit and driver libraries/binaries
