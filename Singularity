@@ -22,7 +22,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   apt update
   apt install -y mpich
   apt install -y build-essential wget curl pkg-config libtool autoconf openjdk-8-jdk g++ zip zlib1g-dev unzip git
-  apt install -y python3-numpy python3-scipy python3-dev python3-pip python3-setuptools
+  apt install -y python3-tk python3-numpy python3-scipy python3-dev python3-pip python3-setuptools
 
   pip3 install --upgrade pip
 
