@@ -1,5 +1,5 @@
 ####
-# Defines a Singularity container with GPU and MPI enabled TensorFlow!
+# Defines a Singularity container with GPU and MPI enabled TensorFlow
 ####
 
 #BootStrap: debootstrap
@@ -34,7 +34,6 @@ From: ubuntu:latest
   rm Anaconda3-5.0.1-Linux-x86.sh
 
   # Install CUDA toolkit and driver libraries/binaries
-
   # Fetch cuda toolkit installer
   wget http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda_7.5.18_linux.run
 
