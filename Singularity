@@ -2,8 +2,9 @@
 # Defines a Singularity container with GPU and MPI enabled TensorFlow
 ####
 
-BootStrap: docker
-From: ubuntu:zesty
+BootStrap: debootstrap
+OSVersion: xenial
+MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
 %environment
   export PATH=${PATH-}:/usr/lib/jvm/java-8-openjdk-amd64/bin/:/usr/local/cuda/bin
