@@ -22,13 +22,16 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   apt update
   apt install -y mpich
   apt install -y build-essential wget curl pkg-config libtool autoconf openjdk-8-jdk g++ zip zlib1g-dev unzip git
+  apt install -y python3-numpy python3-scipy python3-dev python3-pip3 python3-setuptools
+
+  pip3 install --upgrade pip
 
   # Install Anaconda Python 3
-  cd /
-  wget https://repo.continuum.io/archive/Anaconda3-5.0.0-Linux-x86.sh
-  bash Anaconda3-5.0.0-Linux-x86.sh -b -p /anaconda3
-  PATH="/anaconda3/bin:$PATH"
-  rm Anaconda3-5.0.0-Linux-x86.sh
+  #cd /
+  #wget https://repo.continuum.io/archive/Anaconda3-5.0.0-Linux-x86.sh
+  #bash Anaconda3-5.0.0-Linux-x86.sh -b -p /anaconda3
+  #PATH="/anaconda3/bin:$PATH"
+  #rm Anaconda3-5.0.0-Linux-x86.sh
 
   # Install CUDA toolkit and driver libraries/binaries
 
@@ -103,20 +106,20 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
   # Install MPI4PY against mpich(python-mpi4py is built against OpenMPI)
   # GCC/4.8 is too old to acept the compile flags required by mpi4py
-  pip install mpi4py
+  pip3 install mpi4py
 
   # Install Scikit-Optimize
   cd
   git clone https://github.com/scikit-optimize/scikit-optimize.git
   cd scikit-optimize
-  pip install .
+  pip3 install .
   cd
 
   # Install Hyperspace
   cd
   git clone https://github.com/yngtodd/hyperspace.git
   cd hyperspace
-  pip install .
+  pip3 install .
   cd
 
   # Patch container to work on Titan
