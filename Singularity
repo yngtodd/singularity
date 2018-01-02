@@ -130,6 +130,8 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
   # Make sure bazel is shutdown so it doesn't stop singularity from cleanly exiting
   bazel shutdown
-  sleep 10
-  pkill -f bazel*
-  ps aux | grep bazel
+  #sleep 10
+  #pkill -f bazel*
+  #ps aux | grep bazel
+
+  echo "All said and done!"
