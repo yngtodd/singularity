@@ -29,7 +29,7 @@ From: ubuntu:latest
   # Install Anaconda Python 3
   cd /
   wget https://repo.continuum.io/archive/Anaconda3-5.0.0-Linux-x86.sh
-  bash Anaconda3-5.0.0-Linux-x86.sh -b -p $HOME/anaconda3
+  sudo bash Anaconda3-5.0.0-Linux-x86.sh -b -p $HOME/anaconda3
   export PATH="$HOME/anaconda3/bin:$PATH"
   rm Anaconda3-5.0.0-Linux-x86.sh
 
