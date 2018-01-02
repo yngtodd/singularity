@@ -1,13 +1,10 @@
-#####
+####
 # Defines a Singularity container with GPU and MPI enabled TensorFlow
-#####
+####
 
-#BootStrap: debootstrap
-#OSVersion: xenial
-#MirrorURL: http://us.archive.ubuntu.com/ubuntu/
-
-BootStrap: docker
-From: ubuntu:latest
+BootStrap: debootstrap
+OSVersion: xenial
+MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
 %environment
   export PATH=${PATH-}:/usr/lib/jvm/java-8-openjdk-amd64/bin/:/usr/local/cuda/bin
@@ -29,11 +26,12 @@ From: ubuntu:latest
   # Install Anaconda Python 3
   cd /
   wget https://repo.continuum.io/archive/Anaconda3-5.0.0-Linux-x86.sh
-  sudo bash Anaconda3-5.0.0-Linux-x86.sh -b -p $HOME/anaconda3
-  export PATH="$HOME/anaconda3/bin:$PATH"
+  bash Anaconda3-5.0.0-Linux-x86.sh -b -p /anaconda3
+  PATH="/anaconda3/bin:$PATH"
   rm Anaconda3-5.0.0-Linux-x86.sh
 
   # Install CUDA toolkit and driver libraries/binaries
+
   # Fetch cuda toolkit installer
   wget http://developer.download.nvidia.com/compute/cuda/7.5/Prod/local_installers/cuda_7.5.18_linux.run
 
@@ -59,3 +57,76 @@ From: ubuntu:latest
   # Set CUDA related environment variables
   CUDA_HOME=/usr/local/cuda
   LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64
+
+  # Java cert update
+  apt install ca-certificates-java
+  update-ca-certificates -f
+
+  # Install Bazel
+  echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
+  curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
+  apt update -y && apt install -y bazel
+  apt upgrade -y bazel
+
+  # Make sure no leftover tensorflow artifacts from previous builds
+  rm -rf /tmp/tensorflow_pkg
+  rm -rf /root/.cache
+
+  # Set tensorflow configure options
+  export TF_NEED_MKL=0
+  export CC_OPT_FLAGS="-march=native"
+  export TF_NEED_JEMALLOC=1
+  export TF_NEED_GCP=0
+  export TF_NEED_HDFS=0
+  export TF_ENABLE_XLA=0
+  export TF_NEED_OPENCL=0
+  export TF_NEED_CUDA=1
+  export TF_CUDA_CLANG=0
+  export GCC_HOST_COMPILER_PATH=/usr/bin/gcc-4.9
+  export TF_CUDA_VERSION="7.5"
+  export CUDA_TOOLKIT_PATH="/usr/local/cuda"
+  export TF_CUDNN_VERSION="5"
+  export CUDNN_INSTALL_PATH=$CUDA_TOOLKIT_PATH
+  export TF_CUDA_COMPUTE_CAPABILITIES="3.5"
+  export TF_NEED_VERBS=0
+  export TF_NEED_MPI=1
+  export MPI_HOME=/usr
+
+  # Tensorflow has horrible MPI support in ./configure...
+  ln -s /usr/include/mpi/mpi.h /usr/include/mpi.h
+  ln -s /usr/include/mpi/mpio.h /usr/include/mpio.h
+  ln -s /usr/include/mpi/mpicxx.h /usr/include/mpicxx.h
+
+  # Java cert update
+  apt install ca-certificates-java
+  update-ca-certificates -f
+
+  # Install MPI4PY against mpich(python-mpi4py is built against OpenMPI)
+  # GCC/4.8 is too old to acept the compile flags required by mpi4py
+  pip install mpi4py
+
+  # Install Scikit-Optimize
+  cd
+  git clone https://github.com/scikit-optimize/scikit-optimize.git
+  cd scikit-optimize
+  pip install .
+  cd
+
+  # Install Hyperspace
+  cd
+  git clone https://github.com/yngtodd/hyperspace.git
+  cd hyperspace
+  pip install .
+  cd
+
+  # Patch container to work on Titan
+  cd /
+  wget https://raw.githubusercontent.com/olcf/SingularityTools/master/Titan/TitanBootstrap.sh
+  sh TitanBootstrap.sh
+  rm TitanBootstrap.sh
+
+  # Make sure bazel is shutdown so it doesn't stop singularity from cleanly exiting
+  bazel shutdown
+  sleep 10
+  pkill -f bazel*
+  ps aux | grep bazel
