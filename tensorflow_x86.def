@@ -25,10 +25,10 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
   # Install Anaconda Python 3
   cd /
-  wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86.sh
-  bash Anaconda3-5.0.1-Linux-x86.sh -b -p /anaconda3
+  wget https://repo.continuum.io/archive/Anaconda3-5.0.0-Linux-x86.sh
+  bash Anaconda3-5.0.0-Linux-x86.sh -b -p /anaconda3
   PATH="/anaconda3/bin:$PATH"
-  rm Anaconda3-5.0.1-Linux-x86.sh
+  rm Anaconda3-5.0.0-Linux-x86.sh
 
   # Install CUDA toolkit and driver libraries/binaries
 
@@ -124,7 +124,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   wget https://raw.githubusercontent.com/olcf/SingularityTools/master/Titan/TitanBootstrap.sh
   sh TitanBootstrap.sh
   rm TitanBootstrap.sh
-  
+
   # Make sure bazel is shutdown so it doesn't stop singularity from cleanly exiting
   bazel shutdown
   sleep 10
