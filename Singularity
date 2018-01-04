@@ -117,7 +117,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   git checkout tags/v1.3.0
   ./configure 
 
-  bazel build -c opt --copt=-mavx --copt=-msse4.1 --copt=-msse4.2 --config=cuda tensorflow/tools/pip_package:build_pip_package
+  bazel build -c opt --copt=-mavx --copt=-msse4.1 --copt=-msse4.2 --config=cuda tensorflow/tools/pip_package:build_pip_package --incompatible_disallow_uncalled_set_constructor=false
   bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
 
   pip3 install /tmp/tensorflow_pkg/tensorflow-*.whl
