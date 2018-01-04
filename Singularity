@@ -112,7 +112,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   export PYTHON_BIN_PATH=`which python3`
   export PYTHON_LIB_PATH=/usr/lib/python3/dist-packages
   
-  git clone https://github.com/tensorflow/tensorflow.git
+  git clone https://github.com/yngtodd/tensorflow.git
   cd tensorflow
   #git checkout tags/v1.3.0
   ./configure 
