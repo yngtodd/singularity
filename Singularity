@@ -111,16 +111,26 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   # Build/Install Tensorflow against python 3
   export PYTHON_BIN_PATH=`which python3`
   export PYTHON_LIB_PATH=/usr/lib/python3/dist-packages
-
-  git clone https://github.com/tensorflow/tensorflow.git
+  
+  cd /
+  git clone https://github.com/tensorflow/tensorflow
   cd tensorflow
-  git checkout tags/v1.3.0
-  ./configure 
-
-  bazel build -c opt --copt=-mavx --copt=-msse4.1 --copt=-msse4.2 --config=cuda tensorflow/tools/pip_package:build_pip_package --incompatible_disallow_uncalled_set_constructor=false
+  ./configure
+  
+  bazel --batch build -c opt --config=cuda tensorflow/tools/pip_package:build_pip_package
   bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
 
   pip3 install /tmp/tensorflow_pkg/tensorflow-*.whl
+
+  #git clone https://github.com/tensorflow/tensorflow.git
+  #cd tensorflow
+  #git checkout tags/v1.3.0
+  #./configure 
+
+  #bazel build -c opt --copt=-mavx --copt=-msse4.1 --copt=-msse4.2 --config=cuda tensorflow/tools/pip_package:build_pip_package --incompatible_disallow_uncalled_set_constructor=false
+  #bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
+
+  #pip3 install /tmp/tensorflow_pkg/tensorflow-*.whl
 
   cd /
   rm -rf tensorflow
