@@ -133,6 +133,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
   # Install Additional deeplearning python packages
   
+  sleep 2
   pip3 install keras
   
   pip3 install scikit-learn
