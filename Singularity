@@ -114,7 +114,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   
   git clone https://github.com/tensorflow/tensorflow.git
   cd tensorflow
-  git checkout tags/v1.3.0
+  #git checkout tags/v1.3.0
   ./configure 
 
   bazel --batch build -c opt --config=cuda tensorflow/tools/pip_package:build_pip_package
