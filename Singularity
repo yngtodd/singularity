@@ -112,20 +112,15 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   export PYTHON_BIN_PATH=`which python3`
   export PYTHON_LIB_PATH=/usr/lib/python3/dist-packages
   
-  git clone https://github.com/yngtodd/tensorflow.git
+  git clone https://github.com/tensorflow/tensorflow.git
   cd tensorflow
-  #git checkout tags/v1.3.0
+  git checkout tags/v1.3.0
   ./configure 
 
-  bazel --batch build -c opt --config=cuda tensorflow/tools/pip_package:build_pip_package
+  bazel build -c opt --copt=-mavx --copt=-msse4.1 --copt=-msse4.2 --incompatible_disallow_uncalled_set_constructor=false --config=cuda tensorflow/tools/pip_package:build_pip_package
   bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
 
   pip3 install /tmp/tensorflow_pkg/tensorflow-*.whl
-
-  #bazel build -c opt --copt=-mavx --copt=-msse4.1 --copt=-msse4.2 --config=cuda tensorflow/tools/pip_package:build_pip_package --incompatible_disallow_uncalled_set_constructor=false
-  #bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
-
-  #pip3 install /tmp/tensorflow_pkg/tensorflow-*.whl
 
   cd /
   rm -rf tensorflow
@@ -133,7 +128,6 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
   # Install Additional deeplearning python packages
   
-  sleep 2
   pip3 install keras
   
   pip3 install scikit-learn
