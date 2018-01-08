@@ -68,7 +68,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   # Install Bazel
   echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
   curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
-  apt update -y && apt install -y bazel=0.6.0
+  apt update -y && apt install -y bazel=0.5.4
   #apt upgrade -y bazel
 
   # Make sure no leftover tensorflow artifacts from previous builds
