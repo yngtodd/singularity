@@ -68,8 +68,8 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   # Install Bazel
   echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
   curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
-  apt update -y && apt install -y bazel
-  apt upgrade -y bazel
+  apt update -y && apt install -y bazel=0.6.0
+  #apt upgrade -y bazel
 
   # Make sure no leftover tensorflow artifacts from previous builds
   rm -rf /tmp/tensorflow_pkg
@@ -114,7 +114,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   
   git clone https://github.com/tensorflow/tensorflow.git
   cd tensorflow
-  #git checkout tags/v1.3.0
+  git checkout tags/v1.3.0
   ./configure 
 
   bazel build -c opt --copt=-mavx --copt=-msse4.1 --copt=-msse4.2 --config=cuda tensorflow/tools/pip_package:build_pip_package
