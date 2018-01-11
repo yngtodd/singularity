@@ -10,9 +10,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   export PATH=${PATH-}:/usr/lib/jvm/java-8-openjdk-amd64/bin/:/usr/local/cuda/bin
   export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
   export CUDA_HOME=/usr/local/cuda
-  export LD_LIBRARY_PATH=${LD_LIBRARY_PATH-}:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64
-  #export PATH=/usr/local/cuda/bin:$PATH
-  #export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=${LD_LIBRARY_PATH-}:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:/usr/lib
   export PATH="/anaconda3/bin:$PATH"
 
 %post
