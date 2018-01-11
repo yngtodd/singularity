@@ -1,5 +1,5 @@
 ####
-# Defines a Singularity container with GPU and MPI enabled TensorFlow
+# Defines a Singularity container with GPU and MPI enabled Pytorch
 # https://www.tensorflow.org/install/install_sources#tested_source_configurations
 ####
 
@@ -56,8 +56,8 @@ From: ubuntu:zesty
   pip3 install mpi4py
 
   # PyTorch
-  pip3 install http://download.pytorch.org/whl/cu75/torch-0.3.0.post4-cp36-cp36m-linux_x86_64.whl
-  pip3 install torchvision
+  pip3 install http://download.pytorch.org/whl/cu75/torch-0.2.0.post4-cp36-cp36m-linux_x86_64.whl
+  pip3 install --no-deps torchvision
 
   pip3 install scikit-learn
 
