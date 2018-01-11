@@ -68,8 +68,12 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
   # Pytorch
   conda install pytorch torchvision cuda75 -c pytorch
   
+  # Scikit-Learn
   pip install scikit-learn
-
+  
+  # MPI
+  pip install mpi4py
+  
   # Install Scikit-Optimize
   cd
   git clone https://github.com/scikit-optimize/scikit-optimize.git
