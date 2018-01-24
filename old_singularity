@@ -23,10 +23,10 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
   # Install Anaconda Python 3
   cd /
-  wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-  bash Miniconda3-latest-Linux-x86_64.sh -b -p /miniconda3
-  PATH="/miniconda3/bin:$PATH"
-  rm Miniconda3-latest-Linux-x86_64.sh
+  wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
+  bash Anaconda3-5.0.1-Linux-x86_64.sh -b -p /anaconda3
+  PATH="/anaconda3/bin:$PATH"
+  rm Anaconda3-5.0.1-Linux-x86_64.sh
 
   # Install CUDA toolkit and driver libraries/binaries
 
